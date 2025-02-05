@@ -10,6 +10,7 @@ import {
 const prisma = new PrismaClient();
 
 const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET!;
+const environment = process.env.ENV;
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -120,7 +121,14 @@ export const logout = async (req: Request, res: Response) => {
       data: { refreshToken: null },
     });
 
-    res.clearCookie("refreshToken");
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: environment === "production",
+      // sameSite: "strict",
+      sameSite: "none",
+      path: "/",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {

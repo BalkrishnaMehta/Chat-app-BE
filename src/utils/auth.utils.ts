@@ -31,7 +31,8 @@ export const setRefreshTokenCookie = (res: Response, refreshToken: string) => {
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: environment === "production",
-    sameSite: "strict",
+    // sameSite: "strict",
+    sameSite: "none",
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
